@@ -1,0 +1,26 @@
+services:
+  db:
+    container_name: db_postgres
+    image: postgres:17.2
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  backend:
+    container_name: task-tracker-backend
+  frontend:
+    container_name: task-tracker-frontend
+  mail-service:
+    container_name: task-tracker-mail-service
+  scheduler-service:
+    container_name: task-tracker-scheduler-service
+
+volumes:
+  pg_data:
+
+networks:
+  app_network:
+    driver: bridge

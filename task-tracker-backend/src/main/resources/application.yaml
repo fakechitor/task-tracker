@@ -1,3 +1,10 @@
 spring:
   application:
     name: task-tracker-backend
+  datasource:
+    url: ${POSTGRES_URL}
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+server:
+  port: 8090

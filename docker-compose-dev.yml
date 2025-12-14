@@ -9,9 +9,20 @@ services:
       - .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+  kafka:
+    container_name: kafka
+    image: apache/kafka:latest
+    restart: always
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/data
+    networks:
+      - app_network
 
 volumes:
   pg_data:
+  kafka_data:
 
 networks:
   app_network:

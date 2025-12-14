@@ -1,9 +1,11 @@
 package com.fakechitor.tasktrackerbackend.service;
 
+import com.fakechitor.tasktrackerbackend.exception.UserAlreadyExistsException;
 import com.fakechitor.tasktrackerbackend.exception.UserNotFoundException;
 import com.fakechitor.tasktrackerbackend.model.User;
 import com.fakechitor.tasktrackerbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            throw new UserAlreadyExistsException("User with that credentials already exists");
+        }
     }
 }

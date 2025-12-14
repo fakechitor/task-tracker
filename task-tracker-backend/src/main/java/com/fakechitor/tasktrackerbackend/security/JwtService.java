@@ -71,6 +71,7 @@ public class JwtService {
     private String generateToken(User user, long expiryTime) {
         JwtBuilder builder = Jwts.builder()
                 .subject(user.getUsername())
+                .claim("email", user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiryTime))
                 .signWith(getSigningKey());

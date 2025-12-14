@@ -4,7 +4,6 @@ import com.fakechitor.tasktrackerbackend.dto.request.LoginRequestDto;
 import com.fakechitor.tasktrackerbackend.dto.request.RegistrationRequestDto;
 import com.fakechitor.tasktrackerbackend.dto.response.AuthenticationResponseDto;
 import com.fakechitor.tasktrackerbackend.model.User;
-import com.fakechitor.tasktrackerbackend.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

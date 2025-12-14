@@ -1,6 +1,6 @@
 package com.fakechitor.tasktrackerbackend.filter;
 
-import com.fakechitor.tasktrackerbackend.security.JwtService;
+import com.fakechitor.tasktrackerbackend.service.JwtService;
 import com.fakechitor.tasktrackerbackend.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

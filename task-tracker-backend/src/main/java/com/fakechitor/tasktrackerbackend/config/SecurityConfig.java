@@ -1,4 +1,4 @@
-package com.fakechitor.tasktrackerbackend.security;
+package com.fakechitor.tasktrackerbackend.config;
 
 import com.fakechitor.tasktrackerbackend.filter.JwtFilter;
 import com.fakechitor.tasktrackerbackend.service.UserService;

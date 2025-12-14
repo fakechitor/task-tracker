@@ -1,4 +1,4 @@
-package com.fakechitor.tasktrackerbackend.security;
+package com.fakechitor.tasktrackerbackend.service;
 
 import com.fakechitor.tasktrackerbackend.model.User;
 import io.jsonwebtoken.Claims;

@@ -6,5 +6,9 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+security:
+  jwt:
+    secret_key: ${JWT_SECRET}
+    access_token_expiration: 360000000
 server:
   port: 8090

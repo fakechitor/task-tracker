@@ -45,15 +45,11 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest().authenticated())
                 .userDetailsService(userService)
-                .exceptionHandling(e -> {
-                    e.accessDeniedHandler(accessDeniedHandler);
-                })
+                .exceptionHandling(e -> e.accessDeniedHandler(accessDeniedHandler))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFIlter, UsernamePasswordAuthenticationFilter.class)
-                .logout(log -> {
-                    log.logoutUrl("/logout");
-                });
+                .logout(log -> log.logoutUrl("/logout"));
         return http.build();
     }
 

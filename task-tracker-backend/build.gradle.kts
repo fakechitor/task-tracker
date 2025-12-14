@@ -32,6 +32,8 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.session:spring-session-data-redis")
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
+    implementation("org.flywaydb:flyway-core:11.19.0")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql:11.19.0")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
     compileOnly("org.projectlombok:lombok")

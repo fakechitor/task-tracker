@@ -59,6 +59,9 @@ public class TaskService {
         if (taskRequestDto.priority() != null) {
             task.setPriority(taskRequestDto.priority());
         }
+        if (taskRequestDto.status() != null) {
+            task.setStatus(taskRequestDto.status());
+        }
 
         return taskMapper.toDto(task);
     }

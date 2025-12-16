@@ -10,8 +10,8 @@ import {
 import MyTasks from './dashboard/MyTasks';
 import Statistics from './dashboard/Statistics';
 import Calendar from './dashboard/Calendar';
+import EditTaskModal from './dashboard/EditTaskModal'; // ← импорт модального окна
 import '../App.css';
-import EditTaskModal from "./dashboard/EditTaskModal";
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -21,8 +21,8 @@ export default function Dashboard() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const dropdownRef = useRef(null);
     const [editingTask, setEditingTask] = useState(null);
+    const dropdownRef = useRef(null);
 
     const getActiveTab = () => {
         const path = location.pathname;
@@ -31,6 +31,9 @@ export default function Dashboard() {
         return 'tasks';
     };
 
+    const [activeTab, setActiveTab] = useState(getActiveTab);
+
+    // Обработчики редактирования
     const handleEditTask = (task) => {
         setEditingTask(task);
     };
@@ -45,8 +48,7 @@ export default function Dashboard() {
         setEditingTask(null);
     };
 
-    const [activeTab, setActiveTab] = useState(getActiveTab());
-
+    // Закрытие выпадающего меню
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -57,12 +59,13 @@ export default function Dashboard() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    // Загрузка данных пользователя
     useEffect(() => {
         const savedUsername = localStorage.getItem('username') || 'User';
         setUsername(savedUsername);
     }, []);
 
-    // Загрузка задач — один раз при монтировании
+    // Загрузка задач
     useEffect(() => {
         const fetchTasks = async () => {
             const token = localStorage.getItem('token');
@@ -77,7 +80,6 @@ export default function Dashboard() {
                 const params = new URLSearchParams({ userId: id });
                 const response = await fetch(`http://localhost:8090/api/v1/tasks?${params}`, {
                     headers: { 'Authorization': `Bearer ${token}` },
-                    method : 'GET',
                 });
 
                 if (response.status === 403) {
@@ -106,18 +108,9 @@ export default function Dashboard() {
     };
 
     const onAddTask = (newTask) => {
-        // Добавляем новую задачу в начало списка
         setTasks(prev => [newTask, ...prev]);
     };
 
-    const quickActions = [
-        { id: 'tasks', label: 'My Tasks', icon: FaTasks, path: '/dashboard' },
-        { id: 'statistics', label: 'Statistics', icon: FaChartBar, path: '/dashboard/statistics' },
-        { id: 'calendar', label: 'Calendar', icon: FaCalendarAlt, path: '/dashboard/calendar' },
-    ];
-
-    // Внутри компонента Dashboard
-    // В Dashboard.jsx
     const onUpdateTask = async (updatedTask) => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('Not authenticated');
@@ -142,16 +135,55 @@ export default function Dashboard() {
         setTasks(prev => prev.map(t => t.id === updatedTask.id ? updatedTask : t));
     };
 
+    const quickActions = [
+        { id: 'tasks', label: 'My Tasks', icon: FaTasks, path: '/dashboard' },
+        { id: 'statistics', label: 'Statistics', icon: FaChartBar, path: '/dashboard/statistics' },
+        { id: 'calendar', label: 'Calendar', icon: FaCalendarAlt, path: '/dashboard/calendar' },
+    ];
+
     return (
         <div className="dashboard-full">
-            {/* Header */}
+            {/* Header — всегда сверху */}
             <header className="dashboard-header">
-                {/* ... */}
+                <div className="header-left">
+                    <div className="logo">
+                        <FaTasks className="logo-icon" />
+                        <span className="logo-text">TaskTracker</span>
+                    </div>
+                </div>
+
+                <div className="header-right" ref={dropdownRef}>
+                    <div className="user-info" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                        <span className="username">{username}</span>
+                        <span className="user-avatar">
+              {username.charAt(0).toUpperCase()}
+            </span>
+                    </div>
+
+                    {dropdownOpen && (
+                        <div className="user-dropdown">
+                            <button className="dropdown-item" onClick={handleLogout}>
+                                <FaSignOutAlt className="dropdown-icon" /> Sign Out
+                            </button>
+                        </div>
+                    )}
+                </div>
             </header>
 
-            {/* Quick Actions */}
+            {/* Панель быстрого доступа */}
             <div className="quick-actions-bar">
-                {/* ... */}
+                {quickActions.map((action) => {
+                    const Icon = action.icon;
+                    return (
+                        <button
+                            key={action.id}
+                            className={`quick-action-btn ${activeTab === action.id ? 'active' : ''}`}
+                            onClick={() => navigate(action.path)}
+                        >
+                            <Icon className="action-icon" /> {action.label}
+                        </button>
+                    );
+                })}
             </div>
 
             {/* Основной контент */}
@@ -171,6 +203,7 @@ export default function Dashboard() {
                 {activeTab === 'calendar' && <Calendar />}
             </main>
 
+            {/* Модальное окно редактирования — последний элемент! */}
             {editingTask && (
                 <EditTaskModal
                     task={editingTask}

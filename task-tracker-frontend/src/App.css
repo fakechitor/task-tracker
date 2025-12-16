@@ -21,6 +21,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     width: 100%;
+    overflow: visible
 }
 
 /* ===== HEADER ===== */
@@ -630,6 +631,7 @@ body {
 }
 
 .trello-card.dragging {
+    z-index: 2000 !important;
     opacity: 0.6;
     transform: rotate(3deg);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
@@ -658,7 +660,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2000;
+    z-index: 3000 !important;
 }
 
 .modal-content {
@@ -813,12 +815,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    cursor: pointer; /* ← обязательно! */
     font-size: 14px;
     opacity: 0;
     transition: opacity 0.2s;
     margin-left: auto;
     padding: 0;
+    z-index: 10; /* на всякий случай */
 }
 
 .trello-card:hover .trello-card-edit-btn {

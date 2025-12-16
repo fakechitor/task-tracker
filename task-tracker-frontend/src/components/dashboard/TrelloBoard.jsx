@@ -13,7 +13,6 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { FaClock, FaExclamationTriangle } from 'react-icons/fa';
 
-
 const STATUSES = ['CREATED', 'IN_PROGRESS', 'FINISHED', 'CANCELLED'];
 const STATUS_TITLES = {
     CREATED: 'Created',
@@ -36,7 +35,8 @@ const STATUS_TEXT_COLORS = {
     CANCELLED: '#b91c1c',
 };
 
-function TaskCard({ task, isOverlay = false }) {
+// 💡 TaskCard — получает onEdit как пропс
+function TaskCard({ task, isOverlay = false, onEdit }) {
     const {
         attributes,
         listeners,
@@ -61,11 +61,6 @@ function TaskCard({ task, isOverlay = false }) {
         }
     };
 
-    const handleEditClick = (e) => {
-        e.stopPropagation(); // не мешать drag-and-drop
-        onEdit(task);
-    };
-
     const style = {
         transform: CSS.Translate.toString(transform),
         transition: isDragging ? 'none' : 'transform 0.2s ease',
@@ -78,50 +73,59 @@ function TaskCard({ task, isOverlay = false }) {
         <div
             ref={setNodeRef}
             style={style}
-            {...listeners}
-            {...attributes}
             className={`trello-card ${isDragging && !isOverlay ? 'dragging-placeholder' : ''}`}
         >
-            <div className="trello-card-content">
-                <div className="trello-card-title">{task.title || 'Untitled Task'}</div>
-                {task.description && (
-                    <div className="trello-card-description">{task.description}</div>
-                )}
+            {/* Зона перетаскивания — вся карточка, кроме кнопки */}
+            <div
+                {...listeners}
+                {...attributes}
+                style={{ width: '100%', cursor: isDragging ? 'grabbing' : 'grab' }}
+            >
+                <div className="trello-card-content">
+                    <div className="trello-card-title">{task.title || 'Untitled Task'}</div>
+                    {task.description && (
+                        <div className="trello-card-description">{task.description}</div>
+                    )}
+                </div>
+                <div className="trello-card-meta">
+                    {task.deadline && (
+                        <span className="trello-card-deadline">
+              <FaClock /> {formatDate(task.deadline)}
+            </span>
+                    )}
+                    {task.priority !== undefined && (
+                        <span
+                            className="trello-card-priority"
+                            style={{
+                                backgroundColor: STATUS_COLORS[task.status],
+                                color: STATUS_TEXT_COLORS[task.status],
+                            }}
+                        >
+              <FaExclamationTriangle /> {getPriorityText(task.priority)}
+            </span>
+                    )}
+                </div>
             </div>
-            <div className="trello-card-meta">
-                {task.deadline && (
-                    <span className="trello-card-deadline">
-            <FaClock /> {formatDate(task.deadline)}
-          </span>
-                )}
-                {task.priority !== undefined && (
-                    <span
-                        className="trello-card-priority"
-                        style={{
-                            backgroundColor: STATUS_COLORS[task.status],
-                            color: STATUS_TEXT_COLORS[task.status],
-                        }}
-                    >
-            <FaExclamationTriangle /> {getPriorityText(task.priority)}
-          </span>
-                )}
-                {/* Кнопка редактирования */}
-                {!isOverlay && (
-                    <button
-                        className="trello-card-edit-btn"
-                        onClick={handleEditClick}
-                        aria-label="Edit task"
-                    >
-                        ✏️
-                    </button>
-                )}
-            </div>
+
+            {/* Кнопка редактирования — вне зоны drag */}
+            {!isOverlay && onEdit && (
+                <button
+                    className="trello-card-edit-btn"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(task);
+                    }}
+                    aria-label="Edit task"
+                >
+                    ✏️
+                </button>
+            )}
         </div>
     );
 }
 
-// 💡 Колонка — droppable
-function Column({ id, title, tasks, color, textColor }) {
+// 💡 Column — получает onEdit и передаёт в TaskCard
+function Column({ id, title, tasks, color, textColor, onEdit }) {
     const { setNodeRef } = useDroppable({ id });
 
     return (
@@ -139,7 +143,7 @@ function Column({ id, title, tasks, color, textColor }) {
                     <TaskCard
                         key={task.id}
                         task={task}
-                        onEdit={onEdit} // ← передаём из Dashboard
+                        onEdit={onEdit} // ← передаём дальше
                     />
                 ))}
             </div>
@@ -199,13 +203,19 @@ export default function TrelloBoard({ tasks, onUpdateTask, onEditTask }) {
                         tasks={columns[status]}
                         color={STATUS_COLORS[status]}
                         textColor={STATUS_TEXT_COLORS[status]}
-                        onEdit={onEditTask}
+                        onEdit={onEditTask} // ← передаём из Dashboard
                     />
                 ))}
             </div>
 
             <DragOverlay>
-                {activeTask ? <TaskCard task={activeTask} /> : null}
+                {activeTask ? (
+                    <TaskCard
+                        task={activeTask}
+                        isOverlay={true}
+                        style={{ zIndex: 2000 }} // ← добавьте это
+                    />
+                ) : null}
             </DragOverlay>
         </DndContext>
     );

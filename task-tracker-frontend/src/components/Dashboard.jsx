@@ -1,4 +1,3 @@
-// src/components/Dashboard.jsx
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -6,11 +5,16 @@ import {
     FaCalendarAlt,
     FaChartBar,
     FaSignOutAlt,
+    FaHome,
+    FaClipboardCheck,
+    FaClock,
+    FaCheckCircle,
+    FaExclamationTriangle, FaCalendarDay,
 } from 'react-icons/fa';
 import MyTasks from './dashboard/MyTasks';
 import Statistics from './dashboard/Statistics';
 import Calendar from './dashboard/Calendar';
-import EditTaskModal from './dashboard/EditTaskModal'; // ← импорт модального окна
+import EditTaskModal from './dashboard/EditTaskModal';
 import '../App.css';
 
 export default function Dashboard() {
@@ -24,16 +28,19 @@ export default function Dashboard() {
     const [editingTask, setEditingTask] = useState(null);
     const dropdownRef = useRef(null);
 
-    const getActiveTab = () => {
+    const [activeTab, setActiveTab] = useState('tasks');
+
+    useEffect(() => {
         const path = location.pathname;
-        if (path.includes('/dashboard/statistics')) return 'statistics';
-        if (path.includes('/dashboard/calendar')) return 'calendar';
-        return 'tasks';
-    };
+        if (path.includes('/dashboard/statistics')) {
+            setActiveTab('statistics');
+        } else if (path.includes('/dashboard/calendar')) {
+            setActiveTab('calendar');
+        } else {
+            setActiveTab('tasks');
+        }
+    }, [location.pathname]);
 
-    const [activeTab, setActiveTab] = useState(getActiveTab);
-
-    // Обработчики редактирования
     const handleEditTask = (task) => {
         setEditingTask(task);
     };
@@ -48,7 +55,6 @@ export default function Dashboard() {
         setEditingTask(null);
     };
 
-    // Закрытие выпадающего меню
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -59,13 +65,11 @@ export default function Dashboard() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Загрузка данных пользователя
     useEffect(() => {
         const savedUsername = localStorage.getItem('username') || 'User';
         setUsername(savedUsername);
     }, []);
 
-    // Загрузка задач
     useEffect(() => {
         const fetchTasks = async () => {
             const token = localStorage.getItem('token');
@@ -101,6 +105,21 @@ export default function Dashboard() {
 
         fetchTasks();
     }, [navigate]);
+
+    // Статистика для дашборда
+    const dashboardStats = {
+        total: tasks.length,
+        overdue: tasks.filter(task => {
+            if (!task.deadline) return false;
+            const deadline = new Date(task.deadline);
+            const today = new Date();
+            return deadline < today && task.status !== 'FINISHED' && task.status !== 'CANCELLED';
+        }).length,
+        inProgress: tasks.filter(t => t.status === 'IN_PROGRESS').length,
+        finished: tasks.filter(t => t.status === 'FINISHED').length,
+        created: tasks.filter(t => t.status === 'CREATED').length,
+        cancelled: tasks.filter(t => t.status === 'CANCELLED').length,
+    };
 
     const handleLogout = () => {
         localStorage.clear();
@@ -141,9 +160,15 @@ export default function Dashboard() {
         { id: 'calendar', label: 'Calendar', icon: FaCalendarAlt, path: '/dashboard/calendar' },
     ];
 
+    const dashboardWidgets = [
+        { id: 'total', label: 'Total Tasks', value: dashboardStats.total, icon: FaClipboardCheck, color: '#6366f1' },
+        { id: 'overdue', label: 'Overdue', value: dashboardStats.overdue, icon: FaExclamationTriangle, color: '#ef4444' },
+        { id: 'inProgress', label: 'In Progress', value: dashboardStats.inProgress, icon: FaClock, color: '#f59e0b' },
+        { id: 'completed', label: 'Completed', value: dashboardStats.finished, icon: FaCheckCircle, color: '#10b981' },
+    ];
+
     return (
         <div className="dashboard-full">
-            {/* Header — всегда сверху */}
             <header className="dashboard-header">
                 <div className="header-left">
                     <div className="logo">
@@ -156,8 +181,8 @@ export default function Dashboard() {
                     <div className="user-info" onClick={() => setDropdownOpen(!dropdownOpen)}>
                         <span className="username">{username}</span>
                         <span className="user-avatar">
-              {username.charAt(0).toUpperCase()}
-            </span>
+                            {username.charAt(0).toUpperCase()}
+                        </span>
                     </div>
 
                     {dropdownOpen && (
@@ -170,7 +195,6 @@ export default function Dashboard() {
                 </div>
             </header>
 
-            {/* Панель быстрого доступа */}
             <div className="quick-actions-bar">
                 {quickActions.map((action) => {
                     const Icon = action.icon;
@@ -186,8 +210,42 @@ export default function Dashboard() {
                 })}
             </div>
 
-            {/* Основной контент */}
             <main className="dashboard-main">
+                {/* WELCOME SECTION - только на главной странице */}
+                {activeTab === 'tasks' && (
+                    <>
+                        <div className="welcome-section">
+                            <h2>Welcome back, {username}!</h2>
+                            <p>Here's an overview of your tasks and productivity.</p>
+                        </div>
+
+                        {/* DASHBOARD WIDGETS */}
+                        <div className="dashboard-widgets">
+                            {dashboardWidgets.map(widget => {
+                                const Icon = widget.icon;
+                                return (
+                                    <div key={widget.id} className="widget" onClick={() => {
+                                        if (widget.id === 'statistics') {
+                                            navigate('/dashboard/statistics');
+                                        }
+                                    }}>
+                                        <h3>{widget.label}</h3>
+                                        <div className="widget-value" style={{ color: widget.color }}>
+                                            {widget.value}
+                                        </div>
+                                        <div className="widget-icon">
+                                            <Icon size={24} style={{ color: widget.color, marginTop: '12px' }} />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
+                )}
+
+
+
+                {/* MY TASKS BOARD */}
                 {activeTab === 'tasks' && (
                     <MyTasks
                         tasks={tasks}
@@ -199,11 +257,13 @@ export default function Dashboard() {
                     />
                 )}
 
+                {/* STATISTICS PAGE */}
                 {activeTab === 'statistics' && <Statistics tasks={tasks} />}
-                {activeTab === 'calendar' && <Calendar />}
+
+                {/* CALENDAR PAGE */}
+                {activeTab === 'calendar' && <Calendar tasks={tasks} />}
             </main>
 
-            {/* Модальное окно редактирования — последний элемент! */}
             {editingTask && (
                 <EditTaskModal
                     task={editingTask}

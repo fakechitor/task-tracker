@@ -4,16 +4,39 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
-import Calendar from "./components/dashboard/Calendar";
-import Statistics from "./components/dashboard/Statistics";
+import ErrorBoundary from './components/ErrorBoundary';
 
 const router = createBrowserRouter([
-    { path: '/login', element: <Login /> },
-    { path: '/register', element: <Register /> },// ← новая строка
-    { path: '*', element: <Login /> },
-    { path: '/dashboard', element: <Dashboard /> },
-    { path: '/dashboard/statistics', element: <Statistics /> },
-    { path: '/dashboard/calendar', element: <Calendar /> },
+    {
+        path: '/login',
+        element: <Login />,
+        errorElement: <ErrorBoundary />
+    },
+    {
+        path: '/register',
+        element: <Register />,
+        errorElement: <ErrorBoundary />
+    },
+    {
+        path: '/dashboard',
+        element: <Dashboard />,
+        errorElement: <ErrorBoundary />
+    },
+    {
+        path: '/dashboard/statistics',
+        element: <Dashboard />,
+        errorElement: <ErrorBoundary />
+    },
+    {
+        path: '/dashboard/calendar',
+        element: <Dashboard />,
+        errorElement: <ErrorBoundary />
+    },
+    {
+        path: '*',
+        element: <Login />,
+        errorElement: <ErrorBoundary />
+    },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -63,4 +63,8 @@ public class TaskService {
         return taskMapper.toDto(task);
     }
 
+    public void delete(Long id) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException("Task does not exist"));
+        taskRepository.delete(task);
+    }
 }

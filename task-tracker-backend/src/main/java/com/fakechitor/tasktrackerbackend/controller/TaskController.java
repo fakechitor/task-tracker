@@ -4,6 +4,7 @@ import com.fakechitor.tasktrackerbackend.dto.request.TaskRequestDto;
 import com.fakechitor.tasktrackerbackend.dto.response.TaskResponseDto;
 import com.fakechitor.tasktrackerbackend.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,5 +35,11 @@ public class TaskController {
     @PatchMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long id, @RequestBody TaskRequestDto taskRequestDto) {
         return ResponseEntity.ok(taskService.update(id, taskRequestDto));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTask(@PathVariable Long id) {
+        taskService.delete(id);
     }
 }

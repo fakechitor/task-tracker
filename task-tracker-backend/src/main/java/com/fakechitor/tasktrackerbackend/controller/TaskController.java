@@ -19,7 +19,7 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> getAllTasks(@RequestParam Long userId) {
-        return ResponseEntity.ok(taskService.findAll(userId));
+        return ResponseEntity.ok(taskService.findAllByUserId(userId));
     }
 
     @GetMapping("/{id}")

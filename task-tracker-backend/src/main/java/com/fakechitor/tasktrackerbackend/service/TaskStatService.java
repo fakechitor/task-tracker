@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,7 +18,7 @@ public class TaskStatService {
     private final TaskService taskService;
 
     public TaskStatResponseDto getStatByUserId(Long userId) {
-        List<TaskResponseDto> tasks = taskService.findAll(userId);
+        List<TaskResponseDto> tasks = taskService.findAllByUserId(userId);
 
         return countStat(tasks);
     }

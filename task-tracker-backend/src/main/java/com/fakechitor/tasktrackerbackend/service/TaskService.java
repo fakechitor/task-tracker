@@ -29,7 +29,7 @@ public class TaskService {
         return taskMapper.toDto(task);
     }
 
-    public List<TaskResponseDto> findAll(Long userId) {
+    public List<TaskResponseDto> findAllByUserId(Long userId) {
         return taskRepository.findAllByUserId(userId).stream()
                 .map(taskMapper::toDto)
                 .toList();

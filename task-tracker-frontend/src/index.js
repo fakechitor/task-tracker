@@ -4,17 +4,16 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
-import ProtectedRoute from "./components/ProtectedRoute"; // ← новая строка
+import Calendar from "./components/dashboard/Calendar";
+import Statistics from "./components/dashboard/Statistics";
 
 const router = createBrowserRouter([
     { path: '/login', element: <Login /> },
     { path: '/register', element: <Register /> },// ← новая строка
     { path: '*', element: <Login /> },
-    { path: '/dashboard', element: (
-            <ProtectedRoute>
-                <Dashboard />
-            </ProtectedRoute>
-        ) }
+    { path: '/dashboard', element: <Dashboard /> },
+    { path: '/dashboard/statistics', element: <Statistics /> },
+    { path: '/dashboard/calendar', element: <Calendar /> },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

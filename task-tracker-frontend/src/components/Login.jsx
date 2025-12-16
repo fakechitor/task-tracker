@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import './AuthForm.css';
 
@@ -30,6 +31,8 @@ export default function Login() {
 
             if (response.ok) {
                 localStorage.setItem('token', data.accessToken);
+                const decoded = jwtDecode(data.accessToken)
+                localStorage.setItem('id', decoded.id);
                 localStorage.setItem('username', username);
                 navigate('/dashboard');
             } else if (response.status === 403) {

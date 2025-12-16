@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AuthForm.css';
+import {jwtDecode} from "jwt-decode";
 
 export default function Register() {
     const [username, setUsername] = useState('');
@@ -47,6 +48,8 @@ export default function Register() {
 
             if (response.ok) {
                 localStorage.setItem('token', data.accessToken);
+                const decoded = jwtDecode(data.accessToken)
+                localStorage.setItem('id', decoded.id);
                 localStorage.setItem('username', username);
                 navigate('/dashboard');
             } else {

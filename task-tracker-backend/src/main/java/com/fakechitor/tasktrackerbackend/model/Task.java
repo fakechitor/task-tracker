@@ -31,7 +31,7 @@ public class Task {
     private LocalDate deadline;
 
     @Enumerated(EnumType.STRING)
-    private TaskStatus status = TaskStatus.CREATED;
+    private TaskStatus status;
 
     private Short priority;
 

@@ -7,6 +7,7 @@ import com.fakechitor.tasktrackerbackend.exception.TaskNotFoundException;
 import com.fakechitor.tasktrackerbackend.model.Task;
 import com.fakechitor.tasktrackerbackend.repository.TaskRepository;
 import com.fakechitor.tasktrackerbackend.repository.UserRepository;
+import com.fakechitor.tasktrackerbackend.util.TaskStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ public class TaskService {
 
     public TaskResponseDto save(TaskRequestDto taskRequestDto) {
         Task task = taskMapper.requestToModel(taskRequestDto);
+        task.setStatus(TaskStatus.CREATED);
         task.setUser(userRepository.getReferenceById(taskRequestDto.user_id()));
 
         Task taskSaved = taskRepository.save(task);

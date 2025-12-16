@@ -9,6 +9,7 @@ import com.fakechitor.tasktrackerbackend.repository.TaskRepository;
 import com.fakechitor.tasktrackerbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -40,4 +41,26 @@ public class TaskService {
         Task taskSaved = taskRepository.save(task);
         return taskMapper.toDto(taskSaved);
     }
+
+    @Transactional
+    public TaskResponseDto update(Long taskId, TaskRequestDto taskRequestDto) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task does not exist"));
+
+        if (taskRequestDto.title() != null) {
+            task.setTitle(taskRequestDto.title());
+        }
+        if (taskRequestDto.description() != null) {
+            task.setDescription(taskRequestDto.description());
+        }
+        if (taskRequestDto.deadline() != null) {
+            task.setDeadline(taskRequestDto.deadline());
+        }
+        if (taskRequestDto.priority() != null) {
+            task.setPriority(taskRequestDto.priority());
+        }
+
+        return taskMapper.toDto(task);
+    }
+
 }

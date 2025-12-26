@@ -4,6 +4,7 @@ import com.fakechitor.tasktrackeremailsender.dto.EmailMessage;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,13 @@ public class EmailServiceImpl implements EmailService {
     @Value("${resend.email}")
     private String resendEmail;
 
-    private final Resend resend = new Resend(resendApi);
+    private Resend resend;
+
+    @PostConstruct
+    public void init() {
+        this.resend = new Resend(resendApi);
+    }
+
 
     @Override
     public void send(EmailMessage emailMessage) {

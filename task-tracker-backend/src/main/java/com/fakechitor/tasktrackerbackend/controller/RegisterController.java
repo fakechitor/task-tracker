@@ -2,7 +2,7 @@ package com.fakechitor.tasktrackerbackend.controller;
 
 import com.fakechitor.tasktrackerbackend.dto.request.RegistrationRequestDto;
 import com.fakechitor.tasktrackerbackend.dto.response.AuthenticationResponseDto;
-import com.fakechitor.tasktrackerbackend.service.AuthenticationService;
+import com.fakechitor.tasktrackerbackend.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RegisterController {
 
-    private final AuthenticationService authenticationService;
+    private final RegistrationService registrationService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponseDto> registerUser(@RequestBody RegistrationRequestDto registrationRequestDto) {
-        return ResponseEntity.ok(authenticationService.register(registrationRequestDto));
+        return ResponseEntity.ok(registrationService.register(registrationRequestDto));
     }
 }

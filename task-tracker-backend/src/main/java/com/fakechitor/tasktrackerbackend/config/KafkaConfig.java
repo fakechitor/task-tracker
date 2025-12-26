@@ -19,6 +19,9 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
 
+    public static final String TOPIC = "EMAIL_SENDING_TASKS";
+    public static final String EVENT_TYPE = "REGISTRATION";
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 

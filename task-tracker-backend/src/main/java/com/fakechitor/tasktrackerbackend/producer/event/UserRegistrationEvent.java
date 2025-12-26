@@ -1,7 +1,8 @@
 package com.fakechitor.tasktrackerbackend.producer.event;
 
 public record UserRegistrationEvent(
-     String username,
-     String email
+     String email,
+     String title,
+     String description
 ) {
 }
